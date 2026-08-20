@@ -29,10 +29,6 @@ const Usuario = db.define('usuario', {
         allowNull: false,
         unique: true
     },
-    identidade: {
-        type: DataTypes.STRING(20),
-        allowNull: true
-    },
     tipo_usuario: {
         type: DataTypes.ENUM('CLIENTE', 'ADMIN'),
         allowNull: false,
