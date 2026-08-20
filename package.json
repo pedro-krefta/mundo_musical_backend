@@ -1,4 +1,16 @@
 {
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "ecommerce de instrumentos musicas",
+
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
