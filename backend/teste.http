@@ -1,0 +1,56 @@
+### =========================================
+### CADASTRAR USUÁRIO
+### =========================================
+
+POST http://localhost:3000/usuario
+Content-Type: application/json
+
+{
+    "nome": "Pedro Henrique",
+    "email": "pedro@email.com",
+    "senha": "123456",
+    "cpf": "123.456.789-00",
+    "telefone": "(11) 99999-9999",
+    "tipoUsuario": "CLIENTE",
+    "dataNascimento": "2008-05-15"
+}
+
+
+### =========================================
+### LISTAR TODOS OS USUÁRIOS
+### =========================================
+
+GET http://localhost:3000/usuarios
+
+
+### =========================================
+### CONSULTAR USUÁRIO POR ID
+### =========================================
+
+GET http://localhost:3000/usuarios/1
+
+
+### =========================================
+### ATUALIZAR USUÁRIO
+### =========================================
+
+PUT http://localhost:3000/usuarios/1
+Content-Type: application/json
+
+{
+    "nome": "Pedro Henrique Atualizado",
+    "email": "pedro.atualizado@email.com",
+    "senha": "654321",
+    "cpf": "123.456.789-00",
+    "telefone": "(11) 98888-8888",
+    "tipoUsuario": "CLIENTE",
+    "dataNascimento": "2008-05-15",
+    "ativo": true
+}
+
+
+### =========================================
+### DELETAR USUÁRIO
+### =========================================
+
+DELETE http://localhost:3000/usuarios/1
