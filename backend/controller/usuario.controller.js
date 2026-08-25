@@ -1,11 +1,20 @@
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const validator = require('validator')
+const { cpf: cpfValidator } = require('cpf-cnpj-validator')
 const Usuario = require('../models/usuario');
 
 const cadastrar = async(req,res)=>{
     try{
 
     const { nome, email, senha, cpf, telefone, tipoUsuario, dataNascimento } = req.body;
+
+   if(!validator.isEmail(email)){
+    return res.status(400).json({message: 'email invalido'})
+   }
+
+   if(!cpfValidator.isValid(cpf)){
+    return res.status(400).json({message: 'CPF invalido'})
+   }
 
     const senhaHash = await bcrypt.hash(senha, 10);
 
@@ -21,45 +30,9 @@ const usuario = await Usuario.create({
         return res.status(200).json({message: 'usuario cadastrado com sucesso'})
 
     }catch(err){
-        return res.status(500).json({message: 'erro ao cadastrar usuario'})
         console.error('erro ao cadastrar',err)
+        return res.status(500).json({message: 'erro ao cadastrar usuario'})
     }
-}
-
-const login = async(req,res)=>{
-    const { email , senha } = req.body
-    try{
-        const usuario = await Usuario.findOne({where: {email}})
-
-        const senhaCorreta = await bcrypt.compare(senha, usuario.senha)
-
-        if(!senhaCorreta){
-            return res.status(400).json({message: 'email ou senha incorretos'})
-        }
-        
-        const token = jwt.sign(
-            {
-            codUsuario: usuario.codUsuario,
-            email: usuario.email,
-            tipoUsuario: usuario.tipoUsuario
-            },
-            process.env.JWT_SECRET,
-            {
-                expiresIn: '1h'
-            }
-        )
-
-            return res.status(200).json({message: 'login realizado com sucesso ',token})
-
-
-    }catch(err){
-        console.error('Erro ao realizar login:', err)
-
-        return res.status(500).json({
-            message: 'Erro ao realizar login'
-        })
-    }
-    
 }
 
 const listar = async(req,res)=>{
@@ -132,4 +105,4 @@ const atualizar = async(req,res)=>{
     }
 }
 
-module.exports = {cadastrar , login , listar , consultarPK , consultarNome , apagar , atualizar }
+module.exports = {cadastrar  , listar , consultarPK , consultarNome , apagar , atualizar }

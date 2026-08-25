@@ -1,56 +1,579 @@
-### =========================================
-### CADASTRAR USUÁRIO
-### =========================================
+### ============================================
+### VARIÁVEIS GLOBAIS
+### ============================================
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@usuarioId = 1
+@enderecoId = 1
+@produtoId = 1
+@pedidoId = 1
+@categoriaId = 1
+@marcaId = 1
+@fornecedorId = 1
+@cupomId = 1
 
-POST http://localhost:3000/usuario
-Content-Type: application/json
+### ============================================
+### USUÁRIOS
+### ============================================
 
-{
-    "nome": "Pedro Henrique",
-    "email": "pedro@email.com",
-    "senha": "123456",
-    "cpf": "123.456.789-00",
-    "telefone": "(11) 99999-9999",
-    "tipoUsuario": "CLIENTE",
-    "dataNascimento": "2008-05-15"
-}
-
-
-### =========================================
-### LISTAR TODOS OS USUÁRIOS
-### =========================================
-
-GET http://localhost:3000/usuarios
-
-
-### =========================================
-### CONSULTAR USUÁRIO POR ID
-### =========================================
-
-GET http://localhost:3000/usuarios/1
-
-
-### =========================================
-### ATUALIZAR USUÁRIO
-### =========================================
-
-PUT http://localhost:3000/usuarios/1
-Content-Type: application/json
+### Criar usuário
+POST {{baseUrl}}/usuario
+Content-Type: {{contentType}}
 
 {
-    "nome": "Pedro Henrique Atualizado",
-    "email": "pedro.atualizado@email.com",
-    "senha": "654321",
-    "cpf": "123.456.789-00",
-    "telefone": "(11) 98888-8888",
-    "tipoUsuario": "CLIENTE",
-    "dataNascimento": "2008-05-15",
-    "ativo": true
+  "nome": "João Silva",
+  "email": "joao@gmail.com",
+  "senha": "123456",
+  "cpf": "10724992901",
+  "telefone": "11999999999",
+  "tipoUsuario": "CLIENTE",
+  "dataNascimento": "1990-05-15"
 }
 
+### Listar todos os usuários
+GET {{baseUrl}}/usuarios
 
-### =========================================
-### DELETAR USUÁRIO
-### =========================================
+### Buscar usuário por ID (com endereços e pedidos)
+GET {{baseUrl}}/usuarios/{{usuarioId}}
+Content-Type: {{contentType}}
 
-DELETE http://localhost:3000/usuarios/1
+### Atualizar usuário
+PUT {{baseUrl}}/usuarios/{{usuarioId}}
+Content-Type: {{contentType}}
+
+{
+  "nome": "João Silva Atualizado",
+  "telefone": "11888888888"
+}
+
+### Excluir usuário
+DELETE {{baseUrl}}/usuarios/{{usuarioId}}
+
+### ============================================
+### ENDEREÇOS
+### ============================================
+
+### Criar endereço
+POST {{baseUrl}}/enderecos
+Content-Type: {{contentType}}
+
+{
+  "logradouro": "Rua das Flores",
+  "numero": "123",
+  "complemento": "Apto 45",
+  "bairro": "Centro",
+  "cidade": "São Paulo",
+  "estado": "SP",
+  "cep": "01001000",
+  "tipoEndereco": "ENTREGA",
+  "idUsuario": {{usuarioId}}
+}
+
+### Listar todos os endereços
+GET {{baseUrl}}/enderecos
+
+### Buscar endereço por ID
+GET {{baseUrl}}/enderecos/{{enderecoId}}
+
+### Atualizar endereço
+PUT {{baseUrl}}/enderecos/{{enderecoId}}
+Content-Type: {{contentType}}
+
+{
+  "logradouro": "Avenida Paulista",
+  "numero": "1000",
+  "cidade": "São Paulo"
+}
+
+### Excluir endereço
+DELETE {{baseUrl}}/enderecos/{{enderecoId}}
+
+### ============================================
+### FORNECEDORES
+### ============================================
+
+### Criar fornecedor
+POST {{baseUrl}}/fornecedores
+Content-Type: {{contentType}}
+
+{
+  "razaoSocial": "Musical Instrumentos Ltda",
+  "cnpj": "12345678000190",
+  "email": "contato@musical.com.br",
+  "telefone": "1133333333",
+  "endereco": "Rua do Comércio, 456",
+  "contatoResponsavel": "Carlos Pereira"
+}
+
+### Listar todos os fornecedores
+GET {{baseUrl}}/fornecedores
+
+### Buscar fornecedor por ID
+GET {{baseUrl}}/fornecedores/{{fornecedorId}}
+
+### Atualizar fornecedor
+PUT {{baseUrl}}/fornecedores/{{fornecedorId}}
+Content-Type: {{contentType}}
+
+{
+  "razaoSocial": "Musical Instrumentos Ltda - Atualizada",
+  "email": "novo@musical.com.br"
+}
+
+### Excluir fornecedor
+DELETE {{baseUrl}}/fornecedores/{{fornecedorId}}
+
+### ============================================
+### CATEGORIAS
+### ============================================
+
+### Criar categoria
+POST {{baseUrl}}/categorias
+Content-Type: {{contentType}}
+
+{
+  "nomeCategoria": "Guitarras",
+  "descricao": "Instrumentos de cordas dedilhadas"
+}
+
+### Criar subcategoria
+POST {{baseUrl}}/categorias
+Content-Type: {{contentType}}
+
+{
+  "nomeCategoria": "Guitarras Elétricas",
+  "descricao": "Guitarras com captação elétrica",
+  "idCategoriaPai": {{categoriaId}}
+}
+
+### Listar todas as categorias
+GET {{baseUrl}}/categorias
+
+### Buscar categoria por ID (com subcategorias)
+GET {{baseUrl}}/categorias/{{categoriaId}}
+
+### Atualizar categoria
+PUT {{baseUrl}}/categorias/{{categoriaId}}
+Content-Type: {{contentType}}
+
+{
+  "nomeCategoria": "Guitarras e Violões",
+  "descricao": "Categoria atualizada"
+}
+
+### Excluir categoria
+DELETE {{baseUrl}}/categorias/{{categoriaId}}
+
+### ============================================
+### MARCAS
+### ============================================
+
+### Criar marca
+POST {{baseUrl}}/marcas
+Content-Type: {{contentType}}
+
+{
+  "nomeMarca": "Fender",
+  "paisOrigem": "Estados Unidos",
+  "descricao": "Marca icônica de guitarras e amplificadores"
+}
+
+### Listar todas as marcas
+GET {{baseUrl}}/marcas
+
+### Buscar marca por ID
+GET {{baseUrl}}/marcas/{{marcaId}}
+
+### Atualizar marca
+PUT {{baseUrl}}/marcas/{{marcaId}}
+Content-Type: {{contentType}}
+
+{
+  "nomeMarca": "Fender Musical Instruments",
+  "descricao": "Marca atualizada"
+}
+
+### Excluir marca
+DELETE {{baseUrl}}/marcas/{{marcaId}}
+
+### ============================================
+### PRODUTOS
+### ============================================
+
+### Criar produto
+POST {{baseUrl}}/produtos
+Content-Type: {{contentType}}
+
+{
+  "nomeProduto": "Guitarra Stratocaster",
+  "descricao": "Guitarra elétrica clássica com corpo em alder",
+  "preco": 3500.00,
+  "sku": "GUIT-STRAT-001",
+  "idCategoria": {{categoriaId}},
+  "idMarca": {{marcaId}},
+  "idFornecedor": {{fornecedorId}},
+  "ativo": true
+}
+
+### Listar todos os produtos (com categoria, marca e fornecedor)
+GET {{baseUrl}}/produtos
+
+### Buscar produto por ID (com imagens, especificações e estoque)
+GET {{baseUrl}}/produtos/{{produtoId}}
+
+### Atualizar produto
+PUT {{baseUrl}}/produtos/{{produtoId}}
+Content-Type: {{contentType}}
+
+{
+  "nomeProduto": "Guitarra Stratocaster Deluxe",
+  "preco": 4200.00,
+  "descricao": "Versão deluxe com captadores ativos"
+}
+
+### Excluir produto
+DELETE {{baseUrl}}/produtos/{{produtoId}}
+
+### ============================================
+### IMAGENS DO PRODUTO
+### ============================================
+
+### Criar imagem de produto
+POST {{baseUrl}}/imagens-produto
+Content-Type: {{contentType}}
+
+{
+  "urlImagem": "https://exemplo.com/stratocaster.jpg",
+  "ordemExibicao": 1,
+  "imagemPrincipal": true,
+  "idProduto": {{produtoId}}
+}
+
+### Listar imagens de um produto
+GET {{baseUrl}}/produtos/{{produtoId}}/imagens
+
+### Excluir imagem
+DELETE {{baseUrl}}/imagens-produto/1
+
+### ============================================
+### ESPECIFICAÇÕES DO PRODUTO
+### ============================================
+
+### Criar especificação
+POST {{baseUrl}}/especificacoes-produto
+Content-Type: {{contentType}}
+
+{
+  "nomeEspecificacao": "Material",
+  "valorEspecificacao": "Corpo em Alder",
+  "idProduto": {{produtoId}}
+}
+
+### Listar especificações de um produto
+GET {{baseUrl}}/produtos/{{produtoId}}/especificacoes
+
+### ============================================
+### ESTOQUE
+### ============================================
+
+### Criar estoque para produto
+POST {{baseUrl}}/estoque
+Content-Type: {{contentType}}
+
+{
+  "quantidadeDisponivel": 10,
+  "quantidadeMinima": 2,
+  "localizacao": "Prateleira A",
+  "idProduto": {{produtoId}}
+}
+
+### Buscar estoque de um produto
+GET {{baseUrl}}/produtos/{{produtoId}}/estoque
+
+### Atualizar estoque
+PUT {{baseUrl}}/estoque/1
+Content-Type: {{contentType}}
+
+{
+  "quantidadeDisponivel": 8,
+  "quantidadeMinima": 3
+}
+
+### ============================================
+### MOVIMENTAÇÕES DE ESTOQUE
+### ============================================
+
+### Registrar entrada de estoque
+POST {{baseUrl}}/movimentacoes-estoque
+Content-Type: {{contentType}}
+
+{
+  "tipoMovimentacao": "ENTRADA",
+  "quantidade": 5,
+  "motivo": "Compra de fornecedor",
+  "idProduto": {{produtoId}}
+}
+
+### Registrar saída de estoque
+POST {{baseUrl}}/movimentacoes-estoque
+Content-Type: {{contentType}}
+
+{
+  "tipoMovimentacao": "SAIDA",
+  "quantidade": 2,
+  "motivo": "Venda",
+  "idProduto": {{produtoId}}
+}
+
+### Listar movimentações de um produto
+GET {{baseUrl}}/produtos/{{produtoId}}/movimentacoes
+
+### ============================================
+### CARRINHOS
+### ============================================
+
+### Criar carrinho para usuário
+POST {{baseUrl}}/carrinhos
+Content-Type: {{contentType}}
+
+{
+  "status": "ATIVO",
+  "idUsuario": {{usuarioId}}
+}
+
+### Adicionar item ao carrinho
+POST {{baseUrl}}/itens-carrinho
+Content-Type: {{contentType}}
+
+{
+  "quantidade": 2,
+  "precoUnitario": 3500.00,
+  "idCarrinho": 1,
+  "idProduto": {{produtoId}}
+}
+
+### Listar carrinhos de um usuário
+GET {{baseUrl}}/usuarios/{{usuarioId}}/carrinhos
+
+### Buscar carrinho por ID (com itens)
+GET {{baseUrl}}/carrinhos/1
+
+### ============================================
+### PEDIDOS
+### ============================================
+
+### Criar pedido (com itens)
+POST {{baseUrl}}/pedidos
+Content-Type: {{contentType}}
+
+{
+  "statusPedido": "PENDENTE",
+  "valorTotal": 3700.00,
+  "idUsuario": {{usuarioId}},
+  "idEndereco": {{enderecoId}},
+  "itens": [
+    {
+      "idProduto": {{produtoId}},
+      "quantidade": 2,
+      "precoUnitario": 3500.00
+    },
+    {
+      "idProduto": 2,
+      "quantidade": 1,
+      "precoUnitario": 200.00
+    }
+  ]
+}
+
+### Listar todos os pedidos
+GET {{baseUrl}}/pedidos
+
+### Buscar pedido por ID (com itens, pagamento e entrega)
+GET {{baseUrl}}/pedidos/{{pedidoId}}
+
+### Atualizar status do pedido
+PUT {{baseUrl}}/pedidos/{{pedidoId}}
+Content-Type: {{contentType}}
+
+{
+  "statusPedido": "PAGO"
+}
+
+### Excluir pedido
+DELETE {{baseUrl}}/pedidos/{{pedidoId}}
+
+### ============================================
+### PAGAMENTOS
+### ============================================
+
+### Criar pagamento para pedido
+POST {{baseUrl}}/pagamentos
+Content-Type: {{contentType}}
+
+{
+  "formaPagamento": "CARTAO",
+  "valorPago": 3700.00,
+  "statusPagamento": "APROVADO",
+  "idPedido": {{pedidoId}}
+}
+
+### Buscar pagamento por pedido
+GET {{baseUrl}}/pedidos/{{pedidoId}}/pagamento
+
+### ============================================
+### ENTREGAS
+### ============================================
+
+### Criar entrega para pedido
+POST {{baseUrl}}/entregas
+Content-Type: {{contentType}}
+
+{
+  "transportadora": "Correios",
+  "codigoRastreio": "BR123456789",
+  "statusEntrega": "PREPARANDO",
+  "dataEnvio": "2026-08-20T10:00:00.000Z",
+  "dataEntregaPrevista": "2026-08-25",
+  "idPedido": {{pedidoId}}
+}
+
+### Buscar entrega por pedido
+GET {{baseUrl}}/pedidos/{{pedidoId}}/entrega
+
+### ============================================
+### AVALIAÇÕES
+### ============================================
+
+### Criar avaliação de produto
+POST {{baseUrl}}/avaliacoes
+Content-Type: {{contentType}}
+
+{
+  "nota": 5,
+  "comentario": "Excelente produto!",
+  "idProduto": {{produtoId}},
+  "idUsuario": {{usuarioId}}
+}
+
+### Listar avaliações de um produto
+GET {{baseUrl}}/produtos/{{produtoId}}/avaliacoes
+
+### ============================================
+### CUPONS
+### ============================================
+
+### Criar cupom de desconto
+POST {{baseUrl}}/cupons
+Content-Type: {{contentType}}
+
+{
+  "codigoCupom": "DESC10",
+  "tipoDesconto": "PERCENTUAL",
+  "valorDesconto": 10.00,
+  "dataValidade": "2026-12-31",
+  "quantidadeUsoMaxima": 100,
+  "ativo": true
+}
+
+### Listar todos os cupons
+GET {{baseUrl}}/cupons
+
+### Buscar cupom por ID
+GET {{baseUrl}}/cupons/{{cupomId}}
+
+### Aplicar cupom a pedido
+POST {{baseUrl}}/cupons-pedido
+Content-Type: {{contentType}}
+
+{
+  "valorDescontoAplicado": 370.00,
+  "idCupom": {{cupomId}},
+  "idPedido": {{pedidoId}}
+}
+
+### ============================================
+### FAVORITOS
+### ============================================
+
+### Favoritar produto
+POST {{baseUrl}}/favoritos
+Content-Type: {{contentType}}
+
+{
+  "idUsuario": {{usuarioId}},
+  "idProduto": {{produtoId}}
+}
+
+### Listar favoritos de um usuário
+GET {{baseUrl}}/usuarios/{{usuarioId}}/favoritos
+
+### Remover favorito
+DELETE {{baseUrl}}/favoritos/1
+
+### ============================================
+### LOGS
+### ============================================
+
+### Criar log
+POST {{baseUrl}}/logs
+Content-Type: {{contentType}}
+
+{
+  "acao": "CREATE_USUARIO",
+  "tabelaAfetada": "usuarios",
+  "detalhes": "Usuário João Silva criado",
+  "idUsuario": {{usuarioId}}
+}
+
+### Listar logs
+GET {{baseUrl}}/logs
+
+### ============================================
+### COMPRAS FORNECEDOR
+### ============================================
+
+### Criar compra de fornecedor
+POST {{baseUrl}}/compras-fornecedor
+Content-Type: {{contentType}}
+
+{
+  "dataCompra": "2026-08-20T10:00:00.000Z",
+  "valorTotal": 15000.00,
+  "statusCompra": "PENDENTE",
+  "idFornecedor": {{fornecedorId}},
+  "itens": [
+    {
+      "idProduto": {{produtoId}},
+      "quantidade": 5,
+      "precoUnitario": 3000.00
+    }
+  ]
+}
+
+### Listar compras de fornecedor
+GET {{baseUrl}}/fornecedores/{{fornecedorId}}/compras
+
+### Buscar compra por ID (com itens)
+GET {{baseUrl}}/compras-fornecedor/1
+
+### ============================================
+### CONSULTAS AVANÇADAS (JOINs com include)
+### ============================================
+
+### Buscar usuário com endereços, pedidos e avaliações
+GET {{baseUrl}}/usuarios/{{usuarioId}}/completo
+
+### Buscar produto com imagens, especificações, estoque e avaliações
+GET {{baseUrl}}/produtos/{{produtoId}}/completo
+
+### Buscar pedido com itens, produtos, pagamento, entrega e usuário
+GET {{baseUrl}}/pedidos/{{pedidoId}}/completo
+
+### Buscar categoria com subcategorias e produtos
+GET {{baseUrl}}/categorias/{{categoriaId}}/arvore
+
+### Buscar carrinho com itens e produtos
+GET {{baseUrl}}/carrinhos/1/completo
+
+### Buscar fornecedor com produtos e compras
+GET {{baseUrl}}/fornecedores/{{fornecedorId}}/completo
