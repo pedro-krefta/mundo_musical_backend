@@ -23,5 +23,5 @@ const Marca = db.define('marca', {
     timestamps: false,
     tableName: 'marcas'
 })
-
+ 
 module.exports = Marca

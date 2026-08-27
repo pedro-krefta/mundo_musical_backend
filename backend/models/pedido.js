@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize')
 const db = require('../db/conn')
-const Usuario = require('./Usuario')
-const Endereco = require('./Endereco')
+const Usuario = require('./usuario')
+const Endereco = require('./endereco')
 
 const Pedido = db.define('pedido', {
     codPedido: {

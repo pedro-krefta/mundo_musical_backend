@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize')
 const db = require('../db/conn')
-const Carrinho = require('./Carrinho')
-const Produto = require('./Produto')
+const Carrinho = require('./carrinho')
+const Produto = require('./produto')
 
 const ItemCarrinho = db.define('item_carrinho', {
     codItemCarrinho: {

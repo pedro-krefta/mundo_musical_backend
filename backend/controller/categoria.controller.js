@@ -1,4 +1,4 @@
-const Categoria = require('../models/Categoria')
+const Categoria = require('../models/categoria')
 
 const cadastrar = async (req, res) => {
     const valores = req.body

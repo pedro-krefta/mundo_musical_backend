@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize')
 const db = require('../db/conn')
-const Pedido = require('./Pedido')
+const Pedido = require('./pedido')
 
 const Pagamento = db.define('pagamento', {
     codPagamento: {

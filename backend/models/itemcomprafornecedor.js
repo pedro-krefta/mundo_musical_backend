@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize')
 const db = require('../db/conn')
-const CompraFornecedor = require('./CompraFornecedor')
-const Produto = require('./Produto')
+const CompraFornecedor = require('./comprafornecedor')
+const Produto = require('./produto')
 
 const ItemCompraFornecedor = db.define('item_compra_fornecedor', {
     codItemCompra: {

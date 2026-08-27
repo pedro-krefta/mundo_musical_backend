@@ -1,4 +1,4 @@
-const Fornecedor = require('../models/Fornecedor')
+const Fornecedor = require('../models/fornecedor')
 
 const cadastrar = async (req, res) => {
     const valores = req.body

@@ -1,7 +1,7 @@
 const MovimentacaoEstoque = require('../models/movimentacaoestoque')
 
 // Registrar movimentação
-const registrar = async (req, res) => {
+const cadastrar = async (req, res) => {
     const { idProduto, tipoMovimentacao, quantidade, motivo } = req.body
     try {
         const movimentacao = await MovimentacaoEstoque.create({
@@ -32,4 +32,4 @@ const listarPorProduto = async (req, res) => {
     }
 }
 
-module.exports = { registrar, listarPorProduto }
+module.exports = { cadastrar, listarPorProduto }

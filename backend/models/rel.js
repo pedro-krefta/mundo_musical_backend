@@ -6,9 +6,9 @@ const Marca = require('./marca.js')
 const Produto = require('./produto.js')
 const ImagemProduto = require('./imagemproduto.js')
 const EspecificacaoProduto = require('./especificacaoproduto.js')
-const Estoque = require('./Estoque.js')
+const Estoque = require('./estoque.js')
 const MovimentacaoEstoque = require('./movimentacaoestoque.js')
-const Carrinho = require('./carrinho.js')
+const Carrinho = require('./Carrinho.js')
 const ItemCarrinho = require('./itemcarrinho.js')
 const Pedido = require('./pedido.js')
 const ItemPedido = require('./itempedido.js')
@@ -18,7 +18,7 @@ const Avaliacao = require('./avaliacao.js')
 const Cupom = require('./cupom.js')
 const CupomPedido = require('./cupompedido.js')
 const Favorito = require('./favorito.js')
-const Log = require('./Log.js')
+const Log = require('./log.js')
 const CompraFornecedor = require('./comprafornecedor.js')
 const ItemCompraFornecedor = require('./itemcomprafornecedor.js')
 
@@ -475,4 +475,3 @@ module.exports = {
     ItemCompraFornecedor
 }
 
-initAssociations()

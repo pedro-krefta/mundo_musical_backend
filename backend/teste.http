@@ -17,7 +17,7 @@
 ### ============================================
 
 ### Criar usuário
-POST {{baseUrl}}/usuario
+POST {{baseUrl}}/usuarios
 Content-Type: {{contentType}}
 
 {

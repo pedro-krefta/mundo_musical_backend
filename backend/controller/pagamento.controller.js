@@ -33,7 +33,7 @@ const atualizarStatus = async (req, res) => {
 }
 
 // Listar pagamento de um pedido
-const listarPorPedido = async (req, res) => {
+const consultarpedido = async (req, res) => {
     const idPedido = req.params.idPedido
     try {
         const pagamento = await Pagamento.findOne({ where: { idPedido } })
@@ -44,4 +44,4 @@ const listarPorPedido = async (req, res) => {
     }
 }
 
-module.exports = { criar, atualizarStatus, listarPorPedido }
+module.exports = { criar, atualizarStatus, consultarpedido }

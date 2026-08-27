@@ -7,8 +7,8 @@ const cadastrar = async(req,res)=>{
         return res.status(200).json({message: 'produto cadastrado com sucesso'})
 
     }catch(err){
-        return res.status(500).json({message: 'erro ao cadastrar usuario'})
         console.error('erro ao cadastrar',err)
+        return res.status(500).json({message: 'erro ao cadastrar usuario'})
     }
 }
 
