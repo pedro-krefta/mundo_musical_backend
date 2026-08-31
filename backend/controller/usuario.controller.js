@@ -35,6 +35,53 @@ const usuario = await Usuario.create({
     }
 }
 
+const JWT_SECRET = 'minha_chave_secreta_de_estudo_123'
+
+const login = async (req, res) => {
+    try {
+        const { email, senha } = req.body
+
+        const usuario = await Usuario.findOne({ where: { email } })
+        if (!usuario) {
+            return res.status(404).json({ message: 'E-mail não cadastrado!' })
+        }
+
+        const senhaValida = await bcrypt.compare(senha, usuario.senha)
+        if (!senhaValida) {
+            return res.status(401).json({ message: 'Senha incorreta!' })
+        }
+
+
+        if (!usuario.ativo) {
+            return res.status(403).json({ message: 'Usuário desativado!' })
+        }
+
+        const token = jwt.sign(
+            {
+                codUsuario: usuario.codUsuario,
+                nome: usuario.nome,
+                tipoUsuario: usuario.tipoUsuario
+            },
+            JWT_SECRET,
+            { expiresIn: '8h' }
+        )
+
+        return res.status(200).json({
+            message: 'Login realizado com sucesso!',
+            token,
+            usuario: {
+                codUsuario: usuario.codUsuario,
+                nome: usuario.nome,
+                email: usuario.email,
+                tipoUsuario: usuario.tipoUsuario
+            }
+        })
+    } catch (err) {
+        console.error('Erro ao fazer login:', err)
+        return res.status(500).json({ message: 'Erro interno ao realizar login!' })
+    }
+}
+
 const listar = async(req,res)=>{
     try{
         const dados = await Usuario.findAll()
@@ -105,4 +152,4 @@ const atualizar = async(req,res)=>{
     }
 }
 
-module.exports = {cadastrar  , listar , consultarPK , consultarNome , apagar , atualizar }
+module.exports = {cadastrar ,login , listar ,  consultarPK , consultarNome , apagar , atualizar }

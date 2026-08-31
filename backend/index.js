@@ -12,7 +12,31 @@ app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 app.use(cors())
 
-// Importação dos controllers (você já tem)
+
+const JWT_SECRET = 'minha_chave_secreta_de_estudo_123'
+const authMiddleware = (req, res, next) => {
+    const authHeader = req.headers.authorization
+
+    if (!authHeader) {
+        return res.status(401).json({ message: 'Token não fornecido!' })
+    }
+
+    const parts = authHeader.split(' ')
+    if (parts.length !== 2 || parts[0] !== 'Bearer') {
+        return res.status(401).json({ message: 'Formato de token inválido!' })
+    }
+
+    const token = parts[1]
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET)
+        req.usuario = decoded
+        next()
+    } catch (err) {
+        return res.status(401).json({ message: 'Token inválido ou expirado!' })
+    }
+}
+
 const UsuarioController = require('./controller/usuario.controller')
 const EnderecoController = require('./controller/endereco.controller')
 const FornecedorController = require('./controller/fornecedores.controller')
@@ -37,7 +61,8 @@ const LogController = require('./controller/log.controller')
 const CompraFornecedorController = require('./controller/compraFornecedor.controller')
 const ItemCompraFornecedorController = require('./controller/itemCompraFornecedor.controller')
 
-// ========== USUÁRIOS ==========
+
+app.post('/login', UsuarioController.login)
 app.post('/usuarios', UsuarioController.cadastrar)
 app.get('/usuarios', UsuarioController.listar)
 app.get('/usuarios/:id', UsuarioController.consultarPK)
