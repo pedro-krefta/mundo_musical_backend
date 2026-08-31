@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const validator = require('validator')
 const { cpf: cpfValidator } = require('cpf-cnpj-validator')
 const Usuario = require('../models/usuario');
+const jwt = require('jsonwebtoken')
 
 const cadastrar = async(req,res)=>{
     try{

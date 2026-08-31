@@ -1,6 +1,6 @@
 const ItemPedido = require('../models/itempedido')
 
-// Listar itens de um pedido
+
 const listarPorPedido = async (req, res) => {
     const idPedido = req.params.idPedido
     try {
@@ -12,7 +12,7 @@ const listarPorPedido = async (req, res) => {
     }
 }
 
-// Consultar um item específico
+
 const consultarPK = async (req, res) => {
     const id = req.params.id
     try {
