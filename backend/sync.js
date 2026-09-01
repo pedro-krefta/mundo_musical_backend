@@ -3,8 +3,7 @@ const { initAssociations, Usuario, Endereco, Fornecedor, Categoria, Marca, Produ
 
 async function syncDataBase() {
     try {
-        // Sincroniza e força a recriação das tabelas base
-        await conn.sync({ force: true })
+        await conn.sync({ alter: true })
         console.log('Tabelas base sincronizadas com sucesso!')
         
     } catch (err) {

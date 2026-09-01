@@ -1,13 +1,30 @@
 const Favorito = require('../models/favorito')
 
 const cadastrar = async (req, res) => {
-    const valores = req.body
     try {
-        await Favorito.create(valores)
-        res.status(200).json({ message: 'Produto adicionado aos favoritos com sucesso' })
+        const { idUsuario, idProduto } = req.body
+
+        const [favorito, criado] = await Favorito.findOrCreate({
+            where: { idUsuario, idProduto },
+            defaults: { idUsuario, idProduto }
+        })
+
+        if (criado) {
+            return res.status(201).json({ 
+                message: 'Produto adicionado aos favoritos',
+                favoritado: true 
+            })
+        } else {
+            await favorito.destroy()
+            return res.status(200).json({ 
+                message: 'Produto removido dos favoritos',
+                favoritado: false 
+            })
+        }
+
     } catch (err) {
-        console.error('Erro ao adicionar favorito:', err)
-        res.status(500).json({ message: 'Erro ao adicionar favorito' })
+        console.error('Erro ao alternar favorito:', err)
+        return res.status(500).json({ message: 'Erro ao alternar favorito' })
     }
 }
 

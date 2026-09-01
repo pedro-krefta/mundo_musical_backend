@@ -1,23 +1,57 @@
 const ItemCarrinho = require('../models/itemcarrinho')
 
-const cadastrar = async (req, res) => {
-    const valores = req.body
-    try {
-        await ItemCarrinho.create(valores)
-        res.status(200).json({ message: 'Item adicionado ao carrinho com sucesso' })
-    } catch (err) {
-        console.error('Erro ao adicionar item ao carrinho:', err)
-        res.status(500).json({ message: 'Erro ao adicionar item ao carrinho' })
-    }
-}
+const ItemCarrinho = require('../models/itemcarrinho')
+const Carrinho = require('../models/carrinho')
+const Produto = require('../models/produto')
 
-const listar = async (req, res) => {
+const cadastrar = async (req, res) => {
     try {
-        const dados = await ItemCarrinho.findAll()
-        res.status(200).json(dados)
+        const { idCarrinho, idProduto, quantidade } = req.body
+
+        if (!quantidade || quantidade <= 0) {
+            return res.status(400).json({ message: 'Quantidade inválida!' })
+        }
+
+        const carrinho = await Carrinho.findByPk(idCarrinho)
+        if (!carrinho) {
+            return res.status(404).json({ message: 'Carrinho não encontrado!' })
+        }
+
+        const produto = await Produto.findByPk(idProduto)
+        if (!produto) {
+            return res.status(404).json({ message: 'Produto não encontrado!' })
+        }
+
+        const itemExistente = await ItemCarrinho.findOne({
+            where: { idCarrinho, idProduto }
+        })
+
+        if (itemExistente) {
+            itemExistente.quantidade += quantidade
+            itemExistente.precoUnitario = produto.preco
+            await itemExistente.save()
+
+            return res.status(200).json({
+                message: 'Quantidade atualizada no carrinho!',
+                item: itemExistente
+            })
+        }
+
+        const novoItem = await ItemCarrinho.create({
+            idCarrinho,
+            idProduto,
+            quantidade,
+            precoUnitario: produto.preco
+        })
+
+        return res.status(201).json({
+            message: 'Item adicionado ao carrinho!',
+            item: novoItem
+        })
+
     } catch (err) {
-        console.error('Erro ao listar itens do carrinho:', err)
-        res.status(400).json({ message: 'Erro ao listar itens do carrinho' })
+        console.error('Erro ao adicionar item:', err)
+        return res.status(500).json({ message: 'Erro ao adicionar item ao carrinho' })
     }
 }
 

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const JWT_SECRET = 'minha_chave_secreta_de_estudo_123'
 
+//proibido mexer(sabemos oq faz mas não como ele funciona)
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization
 
@@ -24,4 +25,11 @@ const authMiddleware = (req, res, next) => {
     }
 }
 
-module.exports = { authMiddleware }
+//proibido mexer(sabemos oq faz mas não como ele funciona)
+const adminMiddleware = (req, res, next) => {
+    if (req.usuario.tipoUsuario !== 'ADMIN') {
+        return res.status(403).json({ message: 'Acesso negado! Apenas administradores!' })
+    }
+    next()
+}
+module.exports = { authMiddleware, adminMiddleware }

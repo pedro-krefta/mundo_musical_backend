@@ -37,7 +37,7 @@ const consultarPK = async(req,res)=>{
 
 const consultarNome = async(req,res)=>{
     const nome = req.params.nome
-    console.log(id)
+    console.log(nome)
 
     try{
         const dados = await Produto.findOne({where: {nome: nome}})
