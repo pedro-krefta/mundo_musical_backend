@@ -1,14 +1,13 @@
 const ItemCarrinho = require('../models/itemcarrinho')
-
-const ItemCarrinho = require('../models/itemcarrinho')
 const Carrinho = require('../models/carrinho')
 const Produto = require('../models/produto')
+const Estoque = require('../models/estoque') 
 
 const cadastrar = async (req, res) => {
     try {
         const { idCarrinho, idProduto, quantidade } = req.body
 
-        if (!quantidade || quantidade <= 0) {
+        if (!quantidade) {
             return res.status(400).json({ message: 'Quantidade inválida!' })
         }
 
@@ -22,13 +21,31 @@ const cadastrar = async (req, res) => {
             return res.status(404).json({ message: 'Produto não encontrado!' })
         }
 
+        const estoque = await Estoque.findOne({ where: { idProduto } })
+        if (!estoque) {
+            return res.status(404).json({ message: 'Estoque não encontrado para este produto!' })
+        }
+
         const itemExistente = await ItemCarrinho.findOne({
             where: { idCarrinho, idProduto }
         })
 
+        let novaQuantidade = quantidade
         if (itemExistente) {
-            itemExistente.quantidade += quantidade
-            itemExistente.precoUnitario = produto.preco
+            novaQuantidade = itemExistente.quantidade + quantidade
+        }
+
+        if (novaQuantidade > estoque.quantidadeDisponivel) {
+            return res.status(400).json({
+                message: `Estoque insuficiente! Disponível: ${estoque.quantidadeDisponivel}, solicitado: ${novaQuantidade}`
+            })
+        }
+
+        const precoUnitario = produto.preco
+
+        if (itemExistente) {
+            itemExistente.quantidade = novaQuantidade
+            itemExistente.precoUnitario = precoUnitario
             await itemExistente.save()
 
             return res.status(200).json({
@@ -41,7 +58,7 @@ const cadastrar = async (req, res) => {
             idCarrinho,
             idProduto,
             quantidade,
-            precoUnitario: produto.preco
+            precoUnitario
         })
 
         return res.status(201).json({
@@ -50,7 +67,7 @@ const cadastrar = async (req, res) => {
         })
 
     } catch (err) {
-        console.error('Erro ao adicionar item:', err)
+        console.error('Erro ao adicionar item ao carrinho:', err)
         return res.status(500).json({ message: 'Erro ao adicionar item ao carrinho' })
     }
 }
