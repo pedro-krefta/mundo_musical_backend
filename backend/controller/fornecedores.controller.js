@@ -1,4 +1,6 @@
 const Fornecedor = require('../models/fornecedor')
+const Produto = require('../models/produto')
+const CompraFornecedor = require('../models/comprafornecedor')
 
 const cadastrar = async (req, res) => {
     const valores = req.body
@@ -30,6 +32,23 @@ const consultarPK = async (req, res) => {
     } catch (err) {
         console.error('Erro ao consultar fornecedor:', err)
         res.status(400).json({ message: 'Erro ao consultar fornecedor' })
+    }
+}
+
+const consultarCompleto = async (req, res) => {
+    const id = req.params.id
+    try {
+        const dados = await Fornecedor.findByPk(id, {
+            include: [
+                { model: Produto, as: 'produtosDoFornecedor' },
+                { model: CompraFornecedor, as: 'comprasDoFornecedor' }
+            ]
+        })
+        if (!dados) return res.status(404).json({ message: 'Fornecedor não encontrado' })
+        res.status(200).json(dados)
+    } catch (err) {
+        console.error('Erro ao consultar fornecedor completo:', err)
+        res.status(400).json({ message: 'Erro ao consultar fornecedor completo' })
     }
 }
 
@@ -73,4 +92,4 @@ const atualizar = async (req, res) => {
     }
 }
 
-module.exports = { cadastrar, listar, consultarPK, consultarCnpj, apagar, atualizar }
+module.exports = { cadastrar, listar, consultarPK, consultarCnpj, consultarCompleto, apagar, atualizar }

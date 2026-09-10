@@ -75,7 +75,6 @@ const apagar = async (req, res) => {
 }
 
 const atualizar = async (req, res) => {
-    // Favorito normalmente não precisa de atualização
     const valores = req.body
     const id = req.params.id
     try {

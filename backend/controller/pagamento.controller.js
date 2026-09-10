@@ -1,6 +1,5 @@
 const Pagamento = require('../models/pagamento')
 
-// Criar pagamento
 const criar = async (req, res) => {
     const { idPedido, formaPagamento, valorPago } = req.body
     try {
@@ -17,7 +16,6 @@ const criar = async (req, res) => {
     }
 }
 
-// Atualizar status do pagamento
 const atualizarStatus = async (req, res) => {
     const id = req.params.id
     const { statusPagamento } = req.body
@@ -32,7 +30,6 @@ const atualizarStatus = async (req, res) => {
     }
 }
 
-// Listar pagamento de um pedido
 const consultarpedido = async (req, res) => {
     const idPedido = req.params.idPedido
     try {

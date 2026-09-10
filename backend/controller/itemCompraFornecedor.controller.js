@@ -1,6 +1,5 @@
 const ItemCompraFornecedor = require('../models/itemcomprafornecedor')
 
-// Listar itens de uma compra
 const listarPorCompra = async (req, res) => {
     const idCompra = req.params.idCompra
     try {
@@ -12,7 +11,6 @@ const listarPorCompra = async (req, res) => {
     }
 }
 
-// Consultar item específico
 const consultarPK = async (req, res) => {
     const id = req.params.id
     try {

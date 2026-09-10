@@ -1,4 +1,4 @@
-const ImagemProduto = require('../models/imagemproduto')
+const ImagemProduto = require('../models/imagemProduto')
 
 const cadastrar = async (req, res) => {
     const valores = req.body

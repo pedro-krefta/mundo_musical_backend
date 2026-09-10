@@ -3,6 +3,7 @@ const { initAssociations, Usuario, Endereco, Fornecedor, Categoria, Marca, Produ
 
 async function syncDataBase() {
     try {
+        initAssociations()
         await conn.sync({ alter: true })
         console.log('Tabelas base sincronizadas com sucesso!')
         

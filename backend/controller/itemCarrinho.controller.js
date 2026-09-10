@@ -72,6 +72,16 @@ const cadastrar = async (req, res) => {
     }
 }
 
+const listar = async (req, res) => {
+    try {
+        const dados = await ItemCarrinho.findAll()
+        res.status(200).json(dados)
+    } catch (err) {
+        console.error('Erro ao listar itens do carrinho:', err)
+        res.status(400).json({ message: 'Erro ao listar itens do carrinho' })
+    }
+}
+
 const listarPorCarrinho = async (req, res) => {
     const idCarrinho = req.params.idCarrinho
     try {

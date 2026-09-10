@@ -2,6 +2,9 @@ const bcrypt = require('bcrypt')
 const validator = require('validator')
 const { cpf: cpfValidator } = require('cpf-cnpj-validator')
 const Usuario = require('../models/usuario');
+const Endereco = require('../models/endereco')
+const Pedido = require('../models/pedido')
+const Avaliacao = require('../models/avaliacao')
 const jwt = require('jsonwebtoken')
 
 const cadastrar = async(req,res)=>{
@@ -85,7 +88,7 @@ const login = async (req, res) => {
 
 const listar = async(req,res)=>{
     try{
-        const dados = await Usuario.findAll()
+        const dados = await Usuario.findAll({ attributes: { exclude: ['senha'] } })
         res.status(200).json(dados)
     }catch(err){
         res.status(400).json({message: 'erro ao listar'})
@@ -95,10 +98,16 @@ const listar = async(req,res)=>{
 
 const consultarPK = async(req,res)=>{
     const id = req.params.id
-    console.log(id)
 
     try{
-        const dados = await Usuario.findByPk(id)
+        const dados = await Usuario.findByPk(id, {
+            attributes: { exclude: ['senha'] },
+            include: [
+                { model: Endereco, as: 'enderecosDoUsuario' },
+                { model: Pedido, as: 'pedidosDoUsuario' }
+            ]
+        })
+        if(!dados) return res.status(404).json({message: 'usuário não encontrado'})
         res.status(200).json(dados)
     }catch(err){
         res.status(400).json({message: 'erro ao consultar'})
@@ -106,12 +115,30 @@ const consultarPK = async(req,res)=>{
     }
 }
 
+const consultarCompleto = async(req,res)=>{
+    const id = req.params.id
+    try{
+        const dados = await Usuario.findByPk(id, {
+            attributes: { exclude: ['senha'] },
+            include: [
+                { model: Endereco, as: 'enderecosDoUsuario' },
+                { model: Pedido, as: 'pedidosDoUsuario' },
+                { model: Avaliacao, as: 'avaliacoesDoUsuario' }
+            ]
+        })
+        if(!dados) return res.status(404).json({message: 'usuário não encontrado'})
+        res.status(200).json(dados)
+    }catch(err){
+        res.status(400).json({message: 'erro ao consultar usuário completo'})
+        console.error('erro ao consultar usuário completo',err)
+    }
+}
+
 const consultarNome = async(req,res)=>{
     const nome = req.params.nome
-    console.log(nome)
 
     try{
-        const dados = await Usuario.findOne({where: {nome: nome}})
+        const dados = await Usuario.findOne({ where: {nome: nome}, attributes: { exclude: ['senha'] } })
         res.status(200).json(dados)
     }catch(err){
         res.status(400).json({message: 'erro ao consultar'})
@@ -126,7 +153,7 @@ const apagar = async(req,res)=>{
     try{
         const dados = await Usuario.findByPk(id)
         if(!dados){
-            res.status(400).json({message: 'erro ao achar usuario'})
+            return res.status(404).json({message: 'usuario não encontrado'})
         }
         await Usuario.destroy({where: {codUsuario: id}})
         res.status(200).json({message: 'usuario excluido com sucesso'})
@@ -142,7 +169,10 @@ const atualizar = async(req,res)=>{
     try{
         let dados = await Usuario.findByPk(id)
         if(!dados){
-            res.status(400).json({message: 'erro ao achar usuario'})
+            return res.status(404).json({message: 'usuario não encontrado'})
+        }
+        if (valores.senha) {
+            valores.senha = await bcrypt.hash(valores.senha, 10)
         }
         await Usuario.update(valores, {where: {codUsuario: id}})
         dados = await Usuario.findByPk(id)
@@ -153,4 +183,4 @@ const atualizar = async(req,res)=>{
     }
 }
 
-module.exports = {cadastrar ,login , listar ,  consultarPK , consultarNome , apagar , atualizar }
+module.exports = {cadastrar ,login , listar ,  consultarPK , consultarNome , consultarCompleto , apagar , atualizar }

@@ -1,13 +1,44 @@
 const CompraFornecedor = require('../models/comprafornecedor')
+const ItemCompraFornecedor = require('../models/itemcomprafornecedor')
+const Estoque = require('../models/estoque')
+const conn = require('../db/conn')
 
 const cadastrar = async (req, res) => {
-    const valores = req.body
+    const { itens, ...dadosCompra } = req.body
+    const t = await conn.transaction()
     try {
-        await CompraFornecedor.create(valores)
-        res.status(200).json({ message: 'Compra registrada com sucesso' })
+        const compra = await CompraFornecedor.create(dadosCompra, { transaction: t })
+
+        if (Array.isArray(itens) && itens.length > 0) {
+            for (const item of itens) {
+                const { idProduto, quantidade, precoUnitario } = item
+
+                await ItemCompraFornecedor.create({
+                    idCompra: compra.codCompra,
+                    idProduto,
+                    quantidade,
+                    precoUnitario
+                }, { transaction: t })
+
+                const estoque = await Estoque.findOne({ where: { idProduto }, transaction: t })
+                if (estoque) {
+                    estoque.quantidadeDisponivel += quantidade
+                    await estoque.save({ transaction: t })
+                }
+            }
+        }
+
+        await t.commit()
+
+        const compraCompleta = await CompraFornecedor.findByPk(compra.codCompra, {
+            include: [{ model: ItemCompraFornecedor, as: 'itensDaCompra' }]
+        })
+
+        res.status(201).json({ message: 'Compra registrada com sucesso', compra: compraCompleta })
     } catch (err) {
+        await t.rollback()
         console.error('Erro ao registrar compra:', err)
-        res.status(500).json({ message: 'Erro ao registrar compra' })
+        res.status(500).json({ message: err.message || 'Erro ao registrar compra' })
     }
 }
 
@@ -21,10 +52,27 @@ const listar = async (req, res) => {
     }
 }
 
+
+const listarPorFornecedor = async (req, res) => {
+    const idFornecedor = req.params.idFornecedor
+    try {
+        const dados = await CompraFornecedor.findAll({
+            where: { idFornecedor },
+            include: [{ model: ItemCompraFornecedor, as: 'itensDaCompra' }]
+        })
+        res.status(200).json(dados)
+    } catch (err) {
+        console.error('Erro ao listar compras do fornecedor:', err)
+        res.status(400).json({ message: 'Erro ao listar compras do fornecedor' })
+    }
+}
+
 const consultarPK = async (req, res) => {
     const id = req.params.id
     try {
-        const dados = await CompraFornecedor.findByPk(id)
+        const dados = await CompraFornecedor.findByPk(id, {
+            include: [{ model: ItemCompraFornecedor, as: 'itensDaCompra' }]
+        })
         if (!dados) return res.status(404).json({ message: 'Compra não encontrada' })
         res.status(200).json(dados)
     } catch (err) {
@@ -61,4 +109,4 @@ const atualizar = async (req, res) => {
     }
 }
 
-module.exports = { cadastrar, listar, consultarPK, apagar, atualizar }
+module.exports = { cadastrar, listar, listarPorFornecedor, consultarPK, apagar, atualizar }

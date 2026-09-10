@@ -1,6 +1,16 @@
 const Estoque = require('../models/estoque')
 
-// Listar todos os estoques
+const cadastrar = async (req, res) => {
+    const valores = req.body
+    try {
+        const estoque = await Estoque.create(valores)
+        res.status(201).json({ message: 'Estoque cadastrado com sucesso', estoque })
+    } catch (err) {
+        console.error('Erro ao cadastrar estoque:', err)
+        res.status(500).json({ message: 'Erro ao cadastrar estoque' })
+    }
+}
+
 const listar = async (req, res) => {
     try {
         const estoques = await Estoque.findAll()
@@ -11,7 +21,6 @@ const listar = async (req, res) => {
     }
 }
 
-// Buscar estoque de um produto
 const buscarPorProduto = async (req, res) => {
     const idProduto = req.params.idProduto
     try {
@@ -24,7 +33,6 @@ const buscarPorProduto = async (req, res) => {
     }
 }
 
-// Atualizar quantidade
 const atualizarQuantidade = async (req, res) => {
     const id = req.params.id
     const { quantidadeDisponivel } = req.body
@@ -39,4 +47,4 @@ const atualizarQuantidade = async (req, res) => {
     }
 }
 
-module.exports = { listar, buscarPorProduto, atualizarQuantidade }
+module.exports = { cadastrar, listar, buscarPorProduto, atualizarQuantidade }

@@ -1,6 +1,5 @@
 const Entrega = require('../models/entrega')
 
-// Criar entrega
 const criar = async (req, res) => {
     const { idPedido, transportadora, codigoRastreio } = req.body
     try {
@@ -17,7 +16,6 @@ const criar = async (req, res) => {
     }
 }
 
-// Atualizar status da entrega
 const atualizarStatus = async (req, res) => {
     const id = req.params.id
     const { statusEntrega, dataEnvio, dataEntregaRealizada } = req.body
@@ -35,7 +33,6 @@ const atualizarStatus = async (req, res) => {
     }
 }
 
-// Listar entrega de um pedido
 const consultarpedido = async (req, res) => {
     const idPedido = req.params.idPedido
     try {

@@ -1,4 +1,6 @@
 const Carrinho = require('../models/carrinho')
+const ItemCarrinho = require('../models/itemcarrinho')
+const Produto = require('../models/produto')
 
 const criar = async (req, res) => {
     const { idUsuario } = req.body
@@ -42,6 +44,38 @@ const buscarAtivo = async (req, res) => {
     }
 }
 
+const consultarPK = async (req, res) => {
+    const id = req.params.id
+    try {
+        const carrinho = await Carrinho.findByPk(id, {
+            include: [{ model: ItemCarrinho, as: 'itensDoCarrinho' }]
+        })
+        if (!carrinho) return res.status(404).json({ message: 'Carrinho não encontrado' })
+        res.status(200).json(carrinho)
+    } catch (err) {
+        console.error('Erro ao consultar carrinho:', err)
+        res.status(400).json({ message: 'Erro ao consultar carrinho' })
+    }
+}
+
+const consultarCompleto = async (req, res) => {
+    const id = req.params.id
+    try {
+        const carrinho = await Carrinho.findByPk(id, {
+            include: [{
+                model: ItemCarrinho,
+                as: 'itensDoCarrinho',
+                include: [{ model: Produto, as: 'produtoDoItemCarrinho' }]
+            }]
+        })
+        if (!carrinho) return res.status(404).json({ message: 'Carrinho não encontrado' })
+        res.status(200).json(carrinho)
+    } catch (err) {
+        console.error('Erro ao consultar carrinho completo:', err)
+        res.status(400).json({ message: 'Erro ao consultar carrinho completo' })
+    }
+}
+
 const atualizarStatus = async (req, res) => {
     const id = req.params.id
     const { status } = req.body
@@ -62,4 +96,4 @@ const atualizarStatus = async (req, res) => {
     }
 }
 
-module.exports = { criar, buscarAtivo, atualizarStatus }
+module.exports = { criar, buscarAtivo, consultarPK, consultarCompleto, atualizarStatus }

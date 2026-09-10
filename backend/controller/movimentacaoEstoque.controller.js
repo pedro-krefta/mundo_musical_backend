@@ -1,6 +1,5 @@
 const MovimentacaoEstoque = require('../models/movimentacaoestoque')
 
-// Registrar movimentação
 const cadastrar = async (req, res) => {
     const { idProduto, tipoMovimentacao, quantidade, motivo } = req.body
     try {
@@ -17,7 +16,6 @@ const cadastrar = async (req, res) => {
     }
 }
 
-// Listar movimentações de um produto
 const listarPorProduto = async (req, res) => {
     const idProduto = req.params.idProduto
     try {

@@ -1,12 +1,13 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const jwt = require('jsonwebtoken')
-const PORT = 3000
-const hostname = 'localhost'
+const PORT = process.env.PORT || 3000
+const hostname = process.env.HOST || 'localhost'
 
 const conn = require('./db/conn')
-require('./models/rel')
+const { initAssociations } = require('./models/rel')
+initAssociations()
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
@@ -39,106 +40,214 @@ const LogController = require('./controller/log.controller')
 const CompraFornecedorController = require('./controller/compraFornecedor.controller')
 const ItemCompraFornecedorController = require('./controller/itemCompraFornecedor.controller')
 
+// ============================================
+// AUTENTICAÇÃO / USUÁRIOS
+// ============================================
 app.post('/login', UsuarioController.login)
 app.post('/usuarios', UsuarioController.cadastrar)
 
 app.get('/usuarios', authMiddleware, UsuarioController.listar)
+app.get('/usuarios/nome/:nome', authMiddleware, UsuarioController.consultarNome)
 app.get('/usuarios/:id', authMiddleware, UsuarioController.consultarPK)
-app.delete('/usuarios/:id', authMiddleware, adminMiddleware, UsuarioController.apagar)          
-app.put('/usuarios/:id', authMiddleware, adminMiddleware, UsuarioController.atualizar)           
+app.get('/usuarios/:id/completo', authMiddleware, UsuarioController.consultarCompleto)
+app.put('/usuarios/:id', authMiddleware, adminMiddleware, UsuarioController.atualizar)
+app.delete('/usuarios/:id', authMiddleware, adminMiddleware, UsuarioController.apagar)
 
+// ============================================
+// ENDEREÇOS
+// ============================================
 app.post('/enderecos', authMiddleware, EnderecoController.cadastrar)
 app.get('/enderecos', authMiddleware, EnderecoController.listar)
 app.get('/enderecos/:id', authMiddleware, EnderecoController.consultarPK)
-app.delete('/enderecos/:id', authMiddleware, EnderecoController.apagar)
+app.get('/usuarios/:idUsuario/enderecos', authMiddleware, EnderecoController.listarPorUsuario)
 app.put('/enderecos/:id', authMiddleware, EnderecoController.atualizar)
+app.delete('/enderecos/:id', authMiddleware, EnderecoController.apagar)
 
-app.post('/fornecedores', authMiddleware, adminMiddleware, FornecedorController.cadastrar)      
+// ============================================
+// FORNECEDORES
+// ============================================
+app.post('/fornecedores', authMiddleware, adminMiddleware, FornecedorController.cadastrar)
 app.get('/fornecedores', authMiddleware, FornecedorController.listar)
+app.get('/fornecedores/cnpj/:cnpj', authMiddleware, FornecedorController.consultarCnpj)
 app.get('/fornecedores/:id', authMiddleware, FornecedorController.consultarPK)
-app.delete('/fornecedores/:id', authMiddleware, adminMiddleware, FornecedorController.apagar)   
-app.put('/fornecedores/:id', authMiddleware, adminMiddleware, FornecedorController.atualizar)   
+app.get('/fornecedores/:id/completo', authMiddleware, FornecedorController.consultarCompleto)
+app.put('/fornecedores/:id', authMiddleware, adminMiddleware, FornecedorController.atualizar)
+app.delete('/fornecedores/:id', authMiddleware, adminMiddleware, FornecedorController.apagar)
 
-app.post('/categorias', authMiddleware, adminMiddleware, CategoriaController.cadastrar)         
+// ============================================
+// CATEGORIAS
+// ============================================
+app.post('/categorias', authMiddleware, adminMiddleware, CategoriaController.cadastrar)
 app.get('/categorias', authMiddleware, CategoriaController.listar)
+app.get('/categorias/nome/:nome', authMiddleware, CategoriaController.consultarNome)
 app.get('/categorias/:id', authMiddleware, CategoriaController.consultarPK)
-app.delete('/categorias/:id', authMiddleware, adminMiddleware, CategoriaController.apagar)      
-app.put('/categorias/:id', authMiddleware, adminMiddleware, CategoriaController.atualizar)      
+app.get('/categorias/:id/arvore', authMiddleware, CategoriaController.consultarArvore)
+app.put('/categorias/:id', authMiddleware, adminMiddleware, CategoriaController.atualizar)
+app.delete('/categorias/:id', authMiddleware, adminMiddleware, CategoriaController.apagar)
 
-app.post('/marcas', authMiddleware, adminMiddleware, MarcaController.cadastrar)                 
+// ============================================
+// MARCAS
+// ============================================
+app.post('/marcas', authMiddleware, adminMiddleware, MarcaController.cadastrar)
 app.get('/marcas', authMiddleware, MarcaController.listar)
 app.get('/marcas/:id', authMiddleware, MarcaController.consultarPK)
-app.delete('/marcas/:id', authMiddleware, adminMiddleware, MarcaController.apagar)              
-app.put('/marcas/:id', authMiddleware, adminMiddleware, MarcaController.atualizar)              
+app.put('/marcas/:id', authMiddleware, adminMiddleware, MarcaController.atualizar)
+app.delete('/marcas/:id', authMiddleware, adminMiddleware, MarcaController.apagar)
 
-app.post('/produtos', authMiddleware, adminMiddleware, ProdutoController.cadastrar)             
+// ============================================
+// PRODUTOS
+// ============================================
+app.post('/produtos', authMiddleware, adminMiddleware, ProdutoController.cadastrar)
 app.get('/produtos', authMiddleware, ProdutoController.listar)
+app.get('/produtos/nome/:nome', authMiddleware, ProdutoController.consultarNome)
 app.get('/produtos/:id', authMiddleware, ProdutoController.consultarPK)
-app.delete('/produtos/:id', authMiddleware, adminMiddleware, ProdutoController.apagar)          
-app.put('/produtos/:id', authMiddleware, adminMiddleware, ProdutoController.atualizar)          
+app.get('/produtos/:id/completo', authMiddleware, ProdutoController.consultarCompleto)
+app.put('/produtos/:id', authMiddleware, adminMiddleware, ProdutoController.atualizar)
+app.delete('/produtos/:id', authMiddleware, adminMiddleware, ProdutoController.apagar)
 
-app.post('/imagens-produto', authMiddleware, adminMiddleware, ImagemProdutoController.cadastrar) 
-app.get('/produtos/:id/imagens', authMiddleware, ImagemProdutoController.listarPorProduto)
-app.delete('/imagens-produto/:id', authMiddleware, adminMiddleware, ImagemProdutoController.apagar) 
+// ============================================
+// IMAGENS DO PRODUTO
+// ============================================
+app.post('/imagens-produto', authMiddleware, adminMiddleware, ImagemProdutoController.cadastrar)
+app.get('/imagens-produto', authMiddleware, ImagemProdutoController.listar)
+app.get('/imagens-produto/:id', authMiddleware, ImagemProdutoController.consultarPK)
+app.get('/produtos/:idProduto/imagens', authMiddleware, ImagemProdutoController.listarPorProduto)
+app.put('/imagens-produto/:id', authMiddleware, adminMiddleware, ImagemProdutoController.atualizar)
+app.delete('/imagens-produto/:id', authMiddleware, adminMiddleware, ImagemProdutoController.apagar)
 
-app.post('/especificacoes-produto', authMiddleware, adminMiddleware, EspecificacaoProdutoController.cadastrar) 
-app.get('/produtos/:id/especificacoes', authMiddleware, EspecificacaoProdutoController.listarPorProduto)
+// ============================================
+// ESPECIFICAÇÕES DO PRODUTO
+// ============================================
+app.post('/especificacoes-produto', authMiddleware, adminMiddleware, EspecificacaoProdutoController.cadastrar)
+app.get('/especificacoes-produto', authMiddleware, EspecificacaoProdutoController.listar)
+app.get('/especificacoes-produto/:id', authMiddleware, EspecificacaoProdutoController.consultarPK)
+app.get('/produtos/:idProduto/especificacoes', authMiddleware, EspecificacaoProdutoController.listarPorProduto)
+app.put('/especificacoes-produto/:id', authMiddleware, adminMiddleware, EspecificacaoProdutoController.atualizar)
+app.delete('/especificacoes-produto/:id', authMiddleware, adminMiddleware, EspecificacaoProdutoController.apagar)
 
+// ============================================
+// ESTOQUE
+// ============================================
+app.post('/estoque', authMiddleware, adminMiddleware, EstoqueController.cadastrar)
 app.get('/estoque', authMiddleware, EstoqueController.listar)
-app.get('/produtos/:id/estoque', authMiddleware, EstoqueController.buscarPorProduto)
-app.put('/estoque/:id', authMiddleware, adminMiddleware, EstoqueController.atualizarQuantidade)  
+app.get('/produtos/:idProduto/estoque', authMiddleware, EstoqueController.buscarPorProduto)
+app.put('/estoque/:id', authMiddleware, adminMiddleware, EstoqueController.atualizarQuantidade)
 
-app.post('/movimentacoes-estoque', authMiddleware, adminMiddleware, MovimentacaoEstoqueController.cadastrar) 
-app.get('/produtos/:id/movimentacoes', authMiddleware, MovimentacaoEstoqueController.listarPorProduto)
+// ============================================
+// MOVIMENTAÇÕES DE ESTOQUE
+// ============================================
+app.post('/movimentacoes-estoque', authMiddleware, adminMiddleware, MovimentacaoEstoqueController.cadastrar)
+app.get('/produtos/:idProduto/movimentacoes', authMiddleware, MovimentacaoEstoqueController.listarPorProduto)
 
+// ============================================
+// CARRINHOS
+// ============================================
 app.post('/carrinhos', authMiddleware, CarrinhoController.criar)
-app.get('/usuarios/:id/carrinhos', authMiddleware, CarrinhoController.buscarAtivo)
-app.get('/carrinhos/:id', authMiddleware, CarrinhoController.atualizarStatus)
+app.get('/usuarios/:idUsuario/carrinhos', authMiddleware, CarrinhoController.buscarAtivo)
+app.get('/carrinhos/:id', authMiddleware, CarrinhoController.consultarPK)
+app.get('/carrinhos/:id/completo', authMiddleware, CarrinhoController.consultarCompleto)
+app.put('/carrinhos/:id', authMiddleware, CarrinhoController.atualizarStatus)
 
+// ============================================
+// ITENS DO CARRINHO
+// ============================================
 app.post('/itens-carrinho', authMiddleware, ItemCarrinhoController.cadastrar)
+app.get('/itens-carrinho', authMiddleware, ItemCarrinhoController.listar)
+app.get('/itens-carrinho/:id', authMiddleware, ItemCarrinhoController.consultarPK)
+app.get('/carrinhos/:idCarrinho/itens', authMiddleware, ItemCarrinhoController.listarPorCarrinho)
+app.put('/itens-carrinho/:id', authMiddleware, ItemCarrinhoController.atualizar)
+app.delete('/itens-carrinho/:id', authMiddleware, ItemCarrinhoController.apagar)
 
+// ============================================
+// PEDIDOS
+// ============================================
 app.post('/pedidos', authMiddleware, PedidoController.cadastrar)
 app.get('/pedidos', authMiddleware, PedidoController.listar)
 app.get('/pedidos/:id', authMiddleware, PedidoController.consultarPK)
+app.get('/pedidos/:id/completo', authMiddleware, PedidoController.consultarCompleto)
+app.get('/usuarios/:idUsuario/pedidos', authMiddleware, PedidoController.listarPorUsuario)
 app.put('/pedidos/:id', authMiddleware, PedidoController.atualizar)
 app.delete('/pedidos/:id', authMiddleware, PedidoController.apagar)
 
+// ============================================
+// ITENS DO PEDIDO
+// ============================================
+app.get('/pedidos/:idPedido/itens', authMiddleware, ItemPedidoController.listarPorPedido)
+app.get('/itens-pedido/:id', authMiddleware, ItemPedidoController.consultarPK)
+
+// ============================================
+// PAGAMENTOS
+// ============================================
 app.post('/pagamentos', authMiddleware, PagamentoController.criar)
-app.get('/pagamentos', authMiddleware, PagamentoController.consultarpedido)
-app.put('/pedidos/:id/pagamento', authMiddleware, PagamentoController.atualizarStatus)
+app.get('/pedidos/:idPedido/pagamento', authMiddleware, PagamentoController.consultarpedido)
+app.put('/pagamentos/:id', authMiddleware, PagamentoController.atualizarStatus)
 
+// ============================================
+// ENTREGAS
+// ============================================
 app.post('/entregas', authMiddleware, EntregaController.criar)
-app.get('/pedidos/:id/entrega', authMiddleware, EntregaController.consultarpedido)
-app.get('/pedidos/:id', authMiddleware, EntregaController.atualizarStatus)
+app.get('/pedidos/:idPedido/entrega', authMiddleware, EntregaController.consultarpedido)
+app.put('/entregas/:id', authMiddleware, EntregaController.atualizarStatus)
 
+// ============================================
+// AVALIAÇÕES
+// ============================================
 app.post('/avaliacoes', authMiddleware, AvaliacaoController.cadastrar)
-app.get('/produtos/:id/avaliacoes', authMiddleware, AvaliacaoController.listarPorProduto)
+app.get('/avaliacoes/:id', authMiddleware, AvaliacaoController.consultarPK)
+app.get('/produtos/:idProduto/avaliacoes', authMiddleware, AvaliacaoController.listarPorProduto)
+app.put('/avaliacoes/:id', authMiddleware, AvaliacaoController.atualizar)
+app.delete('/avaliacoes/:id', authMiddleware, AvaliacaoController.apagar)
 
-app.post('/cupons', authMiddleware, adminMiddleware, CupomController.cadastrar)                 
+// ============================================
+// CUPONS
+// ============================================
+app.post('/cupons', authMiddleware, adminMiddleware, CupomController.cadastrar)
 app.get('/cupons', authMiddleware, CupomController.listar)
-app.get('/cupons/:id', authMiddleware, CupomController.consultarCodigo)
+app.get('/cupons/codigo/:codigo', authMiddleware, CupomController.consultarCodigo)
+app.get('/cupons/:id', authMiddleware, CupomController.consultarPK)
+app.put('/cupons/:id', authMiddleware, adminMiddleware, CupomController.atualizar)
+app.delete('/cupons/:id', authMiddleware, adminMiddleware, CupomController.apagar)
 
+// ============================================
+// CUPONS APLICADOS AO PEDIDO
+// ============================================
 app.post('/cupons-pedido', authMiddleware, CupomPedidoController.aplicar)
+app.get('/pedidos/:idPedido/cupons', authMiddleware, CupomPedidoController.listarPorPedido)
+app.delete('/cupons-pedido/:id', authMiddleware, CupomPedidoController.remover)
 
+// ============================================
+// FAVORITOS
+// ============================================
 app.post('/favoritos', authMiddleware, FavoritoController.cadastrar)
-app.get('/usuarios/:id/favoritos', authMiddleware, FavoritoController.listarPorUsuario)
+app.get('/favoritos', authMiddleware, FavoritoController.listar)
+app.get('/favoritos/:id', authMiddleware, FavoritoController.consultarPK)
+app.get('/usuarios/:idUsuario/favoritos', authMiddleware, FavoritoController.listarPorUsuario)
 app.delete('/favoritos/:id', authMiddleware, FavoritoController.apagar)
 
-app.post('/logs', authMiddleware, LogController.listarPorUsuario)
-app.get('/logs', authMiddleware, LogController.listar)
+// ============================================
+// LOGS
+// ============================================
+app.post('/logs', authMiddleware, LogController.cadastrar)
+app.get('/logs', authMiddleware, adminMiddleware, LogController.listar)
+app.get('/usuarios/:idUsuario/logs', authMiddleware, adminMiddleware, LogController.listarPorUsuario)
 
-app.post('/compras-fornecedor', authMiddleware, adminMiddleware, CompraFornecedorController.cadastrar) 
-app.get('/fornecedores/:id/compras', authMiddleware, CompraFornecedorController.listar)
-app.get('/compras-fornecedor/:id', authMiddleware, CompraFornecedorController.consultarPK)
+// ============================================
+// COMPRAS DE FORNECEDOR
+// ============================================
+app.post('/compras-fornecedor', authMiddleware, adminMiddleware, CompraFornecedorController.cadastrar)
+app.get('/compras-fornecedor', authMiddleware, adminMiddleware, CompraFornecedorController.listar)
+app.get('/compras-fornecedor/:id', authMiddleware, adminMiddleware, CompraFornecedorController.consultarPK)
+app.get('/fornecedores/:idFornecedor/compras', authMiddleware, adminMiddleware, CompraFornecedorController.listarPorFornecedor)
+app.put('/compras-fornecedor/:id', authMiddleware, adminMiddleware, CompraFornecedorController.atualizar)
+app.delete('/compras-fornecedor/:id', authMiddleware, adminMiddleware, CompraFornecedorController.apagar)
 
+// ============================================
+// ITENS DA COMPRA DE FORNECEDOR
+// ============================================
+app.get('/compras-fornecedor/:idCompra/itens', authMiddleware, adminMiddleware, ItemCompraFornecedorController.listarPorCompra)
+app.get('/itens-compra-fornecedor/:id', authMiddleware, adminMiddleware, ItemCompraFornecedorController.consultarPK)
 
-app.get('/itemcompras-forncedores', authMiddleware, ItemCompraFornecedorController.listarPorCompra)
-app.get('/itemcompras-forncedor/:id', authMiddleware, ItemCompraFornecedorController.consultarPK)
-
-
-app.get('/itempedido', authMiddleware, ItemPedidoController.listarPorPedido)
-app.get('/itempedido/:id', authMiddleware, ItemPedidoController.consultarPK)
-
+// ============================================
 app.get('/', (req, res) => {
     res.status(200).json({ message: 'teste de aplicação rodando' })
 })

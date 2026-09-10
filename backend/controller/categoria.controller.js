@@ -1,4 +1,5 @@
 const Categoria = require('../models/categoria')
+const Produto = require('../models/produto')
 
 const cadastrar = async (req, res) => {
     const valores = req.body
@@ -24,12 +25,31 @@ const listar = async (req, res) => {
 const consultarPK = async (req, res) => {
     const id = req.params.id
     try {
-        const dados = await Categoria.findByPk(id)
+        const dados = await Categoria.findByPk(id, {
+            include: [{ model: Categoria, as: 'subcategorias' }]
+        })
         if (!dados) return res.status(404).json({ message: 'Categoria não encontrada' })
         res.status(200).json(dados)
     } catch (err) {
         console.error('Erro ao consultar categoria:', err)
         res.status(400).json({ message: 'Erro ao consultar categoria' })
+    }
+}
+
+const consultarArvore = async (req, res) => {
+    const id = req.params.id
+    try {
+        const dados = await Categoria.findByPk(id, {
+            include: [
+                { model: Categoria, as: 'subcategorias' },
+                { model: Produto, as: 'produtosDaCategoria' }
+            ]
+        })
+        if (!dados) return res.status(404).json({ message: 'Categoria não encontrada' })
+        res.status(200).json(dados)
+    } catch (err) {
+        console.error('Erro ao consultar árvore da categoria:', err)
+        res.status(400).json({ message: 'Erro ao consultar árvore da categoria' })
     }
 }
 
@@ -73,4 +93,4 @@ const atualizar = async (req, res) => {
     }
 }
 
-module.exports = { cadastrar, listar, consultarPK, consultarNome, apagar, atualizar }
+module.exports = { cadastrar, listar, consultarPK, consultarNome, consultarArvore, apagar, atualizar }

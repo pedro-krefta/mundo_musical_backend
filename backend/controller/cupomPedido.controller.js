@@ -1,6 +1,5 @@
 const CupomPedido = require('../models/cupompedido')
 
-// Aplicar cupom em um pedido
 const aplicar = async (req, res) => {
     const { idCupom, idPedido, valorDescontoAplicado } = req.body
     try {
@@ -16,7 +15,6 @@ const aplicar = async (req, res) => {
     }
 }
 
-// Listar cupons aplicados em um pedido
 const listarPorPedido = async (req, res) => {
     const idPedido = req.params.idPedido
     try {
@@ -28,7 +26,6 @@ const listarPorPedido = async (req, res) => {
     }
 }
 
-// Remover cupom de um pedido
 const remover = async (req, res) => {
     const id = req.params.id
     try {

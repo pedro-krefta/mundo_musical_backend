@@ -1,6 +1,16 @@
 const Log = require('../models/log')
 
-// Listar todos os logs
+const cadastrar = async (req, res) => {
+    const { acao, tabelaAfetada, detalhes, idUsuario } = req.body
+    try {
+        const log = await Log.create({ acao, tabelaAfetada, detalhes, idUsuario })
+        res.status(201).json(log)
+    } catch (err) {
+        console.error('Erro ao registrar log:', err)
+        res.status(500).json({ message: 'Erro ao registrar log' })
+    }
+}
+
 const listar = async (req, res) => {
     try {
         const logs = await Log.findAll({
@@ -13,7 +23,6 @@ const listar = async (req, res) => {
     }
 }
 
-// Listar logs de um usuário
 const listarPorUsuario = async (req, res) => {
     const idUsuario = req.params.idUsuario
     try {
@@ -28,4 +37,4 @@ const listarPorUsuario = async (req, res) => {
     }
 }
 
-module.exports = { listar, listarPorUsuario }
+module.exports = { cadastrar, listar, listarPorUsuario }

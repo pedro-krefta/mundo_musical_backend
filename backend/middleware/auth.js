@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const JWT_SECRET = 'minha_chave_secreta_de_estudo_123'
 
-//proibido mexer(sabemos oq faz mas não como ele funciona)
+//proibido mexer(sabemos oq faz mas nao como ele funciona)
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization
 
