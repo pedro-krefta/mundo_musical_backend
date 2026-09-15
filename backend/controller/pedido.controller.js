@@ -88,7 +88,6 @@ const consultarPK = async (req, res) => {
     }
 }
 
-// Pedido com itens (+ produtos), pagamento, entrega e usuário
 const consultarCompleto = async (req, res) => {
     const id = req.params.id
     try {

@@ -52,7 +52,6 @@ const listar = async (req, res) => {
     }
 }
 
-
 const listarPorFornecedor = async (req, res) => {
     const idFornecedor = req.params.idFornecedor
     try {
