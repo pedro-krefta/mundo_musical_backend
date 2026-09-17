@@ -20,6 +20,16 @@ const cadastrar = async(req,res)=>{
     return res.status(400).json({message: 'CPF invalido'})
    }
 
+   const emailExistente = await Usuario.findOne({ where: { email } })
+   if(emailExistente){
+    return res.status(400).json({message: 'E-mail já cadastrado'})
+   }
+
+   const cpfExistente = await Usuario.findOne({ where: { cpf } })
+   if(cpfExistente){
+    return res.status(400).json({message: 'CPF já cadastrado'})
+   }
+
     const senhaHash = await bcrypt.hash(senha, 10);
 
 const usuario = await Usuario.create({

@@ -81,7 +81,7 @@ const consultarNome = async(req,res)=>{
     console.log(nome)
 
     try{
-        const dados = await Produto.findOne({where: {nome: nome}})
+        const dados = await Produto.findOne({where: {nomeProduto: nome}})
         res.status(200).json(dados)
     }catch(err){
         res.status(400).json({message: 'erro ao consultar'})

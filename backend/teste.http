@@ -12,6 +12,8 @@
 @baseUrl = http://localhost:3000
 @contentType = application/json
 
+@adminToken = {{loginAdmin.response.body.$.token}}
+@clienteToken = {{loginCliente.response.body.$.token}}
 ### ============================================
 ### AUTENTICAÇÃO
 ### ============================================
@@ -86,8 +88,7 @@ Content-Type: {{contentType}}
   "senha": "senhaErrada"
 }
 
-@adminToken = {{loginAdmin.response.body.$.token}}
-@clienteToken = {{loginCliente.response.body.$.token}}
+
 
 ### ============================================
 ### USUÁRIOS
@@ -98,11 +99,11 @@ GET {{baseUrl}}/usuarios
 Authorization: Bearer {{adminToken}}
 
 ### Buscar usuário por ID (com endereços e pedidos)
-GET {{baseUrl}}/usuarios/2
+GET {{baseUrl}}/usuarios/4
 Authorization: Bearer {{clienteToken}}
 
 ### Buscar usuário completo (endereços + pedidos + avaliações)
-GET {{baseUrl}}/usuarios/2/completo
+GET {{baseUrl}}/usuarios/4/completo
 Authorization: Bearer {{clienteToken}}
 
 ### Buscar usuário por nome
@@ -110,7 +111,7 @@ GET {{baseUrl}}/usuarios/nome/João Silva
 Authorization: Bearer {{clienteToken}}
 
 ### Atualizar usuário
-PUT {{baseUrl}}/usuarios/2
+PUT {{baseUrl}}/usuarios/5
 Authorization: Bearer {{adminToken}}
 Content-Type: {{contentType}}
 
