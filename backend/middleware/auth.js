@@ -25,7 +25,6 @@ const authMiddleware = (req, res, next) => {
     }
 }
 
-//proibido mexer(sabemos oq faz mas não como ele funciona)
 const adminMiddleware = (req, res, next) => {
     if (req.usuario.tipoUsuario !== 'ADMIN') {
         return res.status(403).json({ message: 'Acesso negado! Apenas administradores!' })
