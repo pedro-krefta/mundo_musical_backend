@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mundo Musical</title><link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="auth" class="auth-wrap">
+  <section class="auth-card">
+    <div class="brand-mark">♫</div><p class="eyebrow">SUA LOJA DE INSTRUMENTOS</p><h1>Mundo Musical</h1>
+    <p class="muted">Entre para explorar nossa loja.</p>
+    <div class="tabs"><button class="tab active" data-auth="login">Entrar</button><button class="tab" data-auth="register">Criar conta</button></div>
+    <form id="loginForm" class="form-grid">
+      <label>E-mail<input name="email" type="email" required></label>
+      <label>Senha<input name="senha" type="password" required></label>
+      <button class="btn primary full">Entrar na loja</button>
+    </form>
+    <form id="registerForm" class="form-grid hidden">
+      <label>Nome completo<input name="nome" required></label><label>E-mail<input name="email" type="email" required></label>
+      <label>Senha<input name="senha" type="password" minlength="6" required></label><label>CPF<input name="cpf" required placeholder="000.000.000-00"></label>
+      <label>Telefone<input name="telefone" required></label><label>Data de nascimento<input name="dataNascimento" type="date"></label>
+      <button class="btn primary full">Criar minha conta</button>
+    </form>
+    <p class="hint">O primeiro cadastro é de cliente. Contas ADMIN devem ser criadas/alteradas pelo banco ou por um administrador.</p>
+  </section>
+</div>
+<div id="app" class="hidden">
+  <aside class="sidebar">
+    <div class="side-brand"><span>♫</span><div><b>Mundo Musical</b><small>Painel da loja</small></div></div>
+    <div class="user-chip"><div class="avatar" id="avatar">M</div><div><b id="sideName">Usuário</b><small id="sideRole">CLIENTE</small></div></div>
+    <nav id="navigation"></nav>
+    <button id="logout" class="logout">↪ Sair da conta</button>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><p class="eyebrow" id="sectionEyebrow">LOJA</p><h1 id="sectionTitle">Visão geral</h1></div><div class="top-actions"><span class="api-status" id="apiStatus">● API local</span><button class="icon-btn" id="refreshBtn" title="Atualizar">↻</button></div></header>
+    <div id="notice" class="notice hidden"></div>
+    <section id="content"></section>
+    <footer>Mundo Musical <span>•</span> Painel integrado à API Express</footer>
+  </main>
+</div>
+<div id="modal" class="modal hidden"><div class="modal-card"><button class="modal-close" id="closeModal">×</button><div id="modalContent"></div></div></div>
+<script src="js/app.js"></script>
+</body></html>
